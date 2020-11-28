@@ -1,19 +1,44 @@
 /* eslint-disable no-unused-vars */
 import React, { useState } from 'react'
 import Box from '@material-ui/core/Box'
+import Radio from '@material-ui/core/Radio'
+import InputBase from '@material-ui/core/InputBase'
 import Container from '@material-ui/core/Container'
 import Typography from '@material-ui/core/Typography'
-import Radio from '@material-ui/core/Radio'
 import RadioGroup from '@material-ui/core/RadioGroup'
-import FormControlLabel from '@material-ui/core/FormControlLabel'
+import ButtonBase from '@material-ui/core/ButtonBase'
 import FormControl from '@material-ui/core/FormControl'
+import FormControlLabel from '@material-ui/core/FormControlLabel'
 
 import clsx from 'clsx'
 import { makeStyles } from '@material-ui/core/styles'
 
 const useStyles = makeStyles(theme => ({
-  questioncontainer: {
+  container: {
+    display: 'flex',
+    alignItems: 'center',
+    flexDirection: 'column',
+    justifyContent: 'center'
+  },
+  heading: {
     width: '100%',
+    textAlign: 'left',
+    marginTop: theme.spacing(8),
+    marginBottom: theme.spacing(4)
+  },
+  head: {
+    fontSize: 20.0,
+    color: '#113264',
+    marginBottom: theme.spacing(1),
+    fontWeight: theme.typography.fontWeightBold
+  },
+  description: {
+    fontSize: 18.0,
+    color: '#495057',
+    fontWeight: theme.typography.fontWeightRegular
+  },
+  formcontainer: {
+    width: '75%',
     display: 'flex',
     alignItems: 'center',
     justifyContent: 'center',
@@ -33,7 +58,7 @@ const useStyles = makeStyles(theme => ({
     width: '60%',
     fontSize: 18.0,
     textAlign: 'center',
-    marginBottom: theme.spacing(1),
+    marginBottom: theme.spacing(2),
     fontWeight: theme.typography.fontWeightMedium
   },
   formlabel: {
@@ -54,6 +79,34 @@ const useStyles = makeStyles(theme => ({
   },
   text: {
     fontSize: 16
+  },
+  input: {
+    height: 48.0,
+    width: '60%',
+    borderRadius: 5,
+    border: '2px solid #AAAAAA',
+    paddingLeft: theme.spacing(2),
+    paddingRight: theme.spacing(2),
+    marginBottom: theme.spacing(2),
+    fontWeight: theme.typography.fontWeightMedium
+  },
+  submitcontainer: {
+    height: 180,
+    width: '100%',
+    display: 'flex',
+    alignItems: 'center',
+    justifyContent: 'center'
+  },
+  submitbutton: {
+    height: 48,
+    width: 240,
+    border: 'none',
+    fontSize: 18.0,
+    borderRadius: 5.0,
+    cursor: 'pointer',
+    backgroundColor: '#3D59FA',
+    color: theme.palette.common.white,
+    fontWeight: theme.typography.fontWeightMedium
   }
 }))
 
@@ -66,7 +119,7 @@ const Question = () => {
   }
 
   return (
-    <Box className={classes.questioncontainer} >
+    <Box className={classes.formcontainer} >
       <Typography className={classes.formtitle} >You consider yourself more practical than creative.</Typography>
       <FormControl className={classes.form} >
         <Typography className={clsx(classes.formlabel, classes.formlabelleft)} >Disagree</Typography>
@@ -81,19 +134,42 @@ const Question = () => {
   )
 }
 
+const Email = () => {
+  const classes = useStyles()
+  return (
+    <Box className={classes.formcontainer} >
+        <Typography className={classes.formtitle} >Your email</Typography>
+        <InputBase className={classes.input} type="text" placeholder="you@example.com" />
+    </Box>
+  )
+}
+
+const Submit = () => {
+  const classes = useStyles()
+  return (
+    <Box className={classes.submitcontainer} >
+      <ButtonBase className={classes.submitbutton} >Save & Continue</ButtonBase>
+    </Box>
+  )
+}
+
 const Index = () => {
+  const classes = useStyles()
   const [email, setEmail] = useState()
   const [answers, setAnswers] = useState({})
   const [submitting, setSubmitting] = useState(false)
 
   return (
-    <Container maxWidth="lg">
-      <Box my={4}>
-        <Typography variant="h4" component="h1" gutterBottom>
-          Next.js example
-        </Typography>
+    <Container className={classes.container} maxWidth="lg" >
+      <Box className={classes.heading} >
+        <Typography className={classes.head} >Discover Your Perspective</Typography>
+        <Typography className={classes.description} >Complete the 7 min test and get a detailed report of your lenses on the world.</Typography>
       </Box>
-      <Question/>
+      {
+        [1, 2, 3, 4, 5, 6, 7, 8, 9, 10].map((e, i) => <Question key={i} />)
+      }
+      <Email/>
+      <Submit/>
     </Container>
   )
 }

@@ -56,8 +56,13 @@ const handler = async (req, res) => {
       // Calculate meaning scores
       const scores = calculateMeaningScores(questions, answers)
       // Calculate MBTI result
-      const response = calculateMBTIresult(scores)
-      return res.status(200).send(response)
+      const result = calculateMBTIresult(scores)
+      // Update answer result
+      const ansQuery = { _id: answerId }
+      const ansUpdate = { $set: { result } }
+      await Answer.findOneAndUpdate(ansQuery, ansUpdate)
+      // Return response
+      return res.status(200).send(result)
     } catch (error) {
       return res.status(500).send(error.message)
     }

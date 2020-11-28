@@ -15,6 +15,9 @@ const answer = new Schema({
     type: Object,
     required: true
   },
+  result: {
+    type: String
+  },
   date: {
     type: Date,
     default: Date.now
