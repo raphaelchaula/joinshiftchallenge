@@ -110,6 +110,16 @@ const useStyles = makeStyles(theme => ({
   }
 }))
 
+const Heading = () => {
+  const classes = useStyles()
+  return (
+    <Box className={classes.heading} >
+      <Typography className={classes.head} >Discover Your Perspective</Typography>
+      <Typography className={classes.description} >Complete the 7 min test and get a detailed report of your lenses on the world.</Typography>
+    </Box>
+  )
+}
+
 const Question = () => {
   const classes = useStyles()
   const [value, setValue] = useState('')
@@ -125,7 +135,7 @@ const Question = () => {
         <Typography className={clsx(classes.formlabel, classes.formlabelleft)} >Disagree</Typography>
         <RadioGroup row value={value} onChange={handleRadioChange} aria-label="gender" name="customized-radios" >
           {
-            [1, 2, 3, 4, 5, 6, 7].map(e => <FormControlLabel className={classes.radiolabel} value={e} checked={e === value} control={<Radio />} label="" />)
+            [1, 2, 3, 4, 5, 6, 7].map(e => <FormControlLabel key={1} className={classes.radiolabel} value={e} checked={e === value} control={<Radio />} label="" />)
           }
         </RadioGroup>
         <Typography className={clsx(classes.formlabel, classes.formlabelright)} >Agree</Typography>
@@ -161,10 +171,7 @@ const Index = () => {
 
   return (
     <Container className={classes.container} maxWidth="lg" >
-      <Box className={classes.heading} >
-        <Typography className={classes.head} >Discover Your Perspective</Typography>
-        <Typography className={classes.description} >Complete the 7 min test and get a detailed report of your lenses on the world.</Typography>
-      </Box>
+      <Heading/>
       {
         [1, 2, 3, 4, 5, 6, 7, 8, 9, 10].map((e, i) => <Question key={i} />)
       }
