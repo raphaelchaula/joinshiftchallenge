@@ -8,6 +8,8 @@
     "start": "next start"
   },
   "dependencies": {
+    "@material-ui/core": "^4.11.1",
+    "clsx": "^1.1.1",
     "mongoose": "^5.10.16",
     "next": "10.0.3",
     "react": "17.0.1",
