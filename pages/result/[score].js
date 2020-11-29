@@ -126,7 +126,7 @@ const ResultContainer = ({ result }) => {
     <Box className={classes.resultcontainer} >
       <Box>
           <Typography className={classes.resulttitle} >Your Perspective</Typography>
-          <Typography className={classes.resultdescription} >Your Perspective Type is ENTJ</Typography>
+          <Typography className={classes.resultdescription} >Your Perspective Type is {result}</Typography>
       </Box>
       <Box>
           <ScoreGroup result={result} />

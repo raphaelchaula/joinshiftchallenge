@@ -8,9 +8,19 @@ import Typography from '@material-ui/core/Typography'
 import RadioGroup from '@material-ui/core/RadioGroup'
 import ButtonBase from '@material-ui/core/ButtonBase'
 import FormControl from '@material-ui/core/FormControl'
+import Button from '@material-ui/core/Button'
+import Dialog from '@material-ui/core/Dialog'
+import Slide from '@material-ui/core/Slide'
+import DialogTitle from '@material-ui/core/DialogTitle'
+import DialogActions from '@material-ui/core/DialogActions'
+import DialogContent from '@material-ui/core/DialogContent'
+import DialogContentText from '@material-ui/core/DialogContentText'
 import FormControlLabel from '@material-ui/core/FormControlLabel'
+import CircularProgress from '@material-ui/core/CircularProgress'
 
 import clsx from 'clsx'
+import axios from 'axios'
+import { useRouter } from 'next/router'
 import { makeStyles } from '@material-ui/core/styles'
 
 const useStyles = makeStyles(theme => ({
@@ -107,8 +117,32 @@ const useStyles = makeStyles(theme => ({
     backgroundColor: '#3D59FA',
     color: theme.palette.common.white,
     fontWeight: theme.typography.fontWeightMedium
+  },
+  dialogTitle: {
+    marginTop: theme.spacing(2),
+    marginBottom: -theme.spacing(1)
+  },
+  dialogContent: {
+    minWidth: 480,
+    marginBottom: -theme.spacing(2)
+  },
+  loading: {
+    width: '100%',
+    height: '100vh',
+    display: 'flex',
+    alignItems: 'center',
+    justifyContent: 'center'
   }
 }))
+
+const Loading = () => {
+  const classes = useStyles()
+  return (
+    <Box className={classes.loading} >
+      <CircularProgress size={60} color="primary" />
+    </Box>
+  )
+}
 
 const Heading = () => {
   const classes = useStyles()
@@ -120,22 +154,23 @@ const Heading = () => {
   )
 }
 
-const Question = () => {
+const Question = ({ question, answerQuestion }) => {
   const classes = useStyles()
   const [value, setValue] = useState('')
 
   const handleRadioChange = (event) => {
     setValue(parseInt(event.target.value))
+    answerQuestion(question._id, event.target.value)
   }
 
   return (
     <Box className={classes.formcontainer} >
-      <Typography className={classes.formtitle} >You consider yourself more practical than creative.</Typography>
+      <Typography className={classes.formtitle} >{question.title}</Typography>
       <FormControl className={classes.form} >
         <Typography className={clsx(classes.formlabel, classes.formlabelleft)} >Disagree</Typography>
         <RadioGroup row value={value} onChange={handleRadioChange} aria-label="gender" name="customized-radios" >
           {
-            [1, 2, 3, 4, 5, 6, 7].map(e => <FormControlLabel key={1} className={classes.radiolabel} value={e} checked={e === value} control={<Radio />} label="" />)
+            [1, 2, 3, 4, 5, 6, 7].map((e, i) => <FormControlLabel key={i} className={classes.radiolabel} value={e} checked={e === value} control={<Radio />} label="" />)
           }
         </RadioGroup>
         <Typography className={clsx(classes.formlabel, classes.formlabelright)} >Agree</Typography>
@@ -144,39 +179,123 @@ const Question = () => {
   )
 }
 
-const Email = () => {
+const Email = ({ setEmail }) => {
   const classes = useStyles()
   return (
     <Box className={classes.formcontainer} >
         <Typography className={classes.formtitle} >Your email</Typography>
-        <InputBase className={classes.input} type="text" placeholder="you@example.com" />
+        <InputBase className={classes.input} onChange={(e) => setEmail(e.target.value)} type="text" placeholder="you@example.com" />
     </Box>
   )
 }
 
-const Submit = () => {
+const Submit = ({ submitting, handleSubmitAnswers }) => {
   const classes = useStyles()
   return (
     <Box className={classes.submitcontainer} >
-      <ButtonBase className={classes.submitbutton} >Save & Continue</ButtonBase>
+      <ButtonBase className={classes.submitbutton} onClick={handleSubmitAnswers} >
+        {submitting ? <CircularProgress size={24} color="white" /> : 'Save & Continue'}
+      </ButtonBase>
     </Box>
+  )
+}
+
+const Transition = React.forwardRef(function Transition (props, ref) {
+  return <Slide direction="up" ref={ref} {...props} />
+})
+
+const AlertDialog = ({ openDialog, dialogText, dialogTitle, closeDialog }) => {
+  const classes = useStyles()
+  return (
+    <Dialog keepMounted open={openDialog} TransitionComponent={Transition}>
+      <DialogTitle className={classes.dialogTitle} >{dialogTitle}</DialogTitle>
+      <DialogContent className={classes.dialogContent} >
+        <DialogContentText>{dialogText}</DialogContentText>
+      </DialogContent>
+      <DialogActions>
+        <Button onClick={closeDialog} color="primary">OK</Button>
+      </DialogActions>
+    </Dialog>
   )
 }
 
 const Index = () => {
   const classes = useStyles()
+  const router = useRouter()
+
   const [email, setEmail] = useState()
   const [answers, setAnswers] = useState({})
+  const [questions, setQuestions] = useState()
+  const [dialogText, setDialogText] = useState('')
+  const [dialogTitle, setDialogTitle] = useState('')
+  const [openDialog, setOpenDialog] = useState(false)
   const [submitting, setSubmitting] = useState(false)
+
+  React.useEffect(async () => {
+    const qstns = await axios.get('/api/getquestions')
+    setQuestions(qstns.data)
+  }, [])
+
+  const handleSetAnswer = (question, answer) => {
+    const ansrs = answers
+    ansrs[question] = parseInt(answer)
+    setAnswers(ansrs)
+  }
+
+  const handleSetEmail = (value) => {
+    setEmail(value)
+  }
+
+  const toggleDialog = () => {
+    setOpenDialog(!openDialog)
+  }
+
+  const handleSubmitAnswers = async () => {
+    for (let i = 1; i <= 10; i++) {
+      if (!answers[i]) {
+        setDialogTitle('Answer all questions')
+        setDialogText('Please, answer all the questions to complete the test')
+        setOpenDialog(true)
+        return null
+      }
+    }
+    if (!email) {
+      setDialogTitle('Enter your email')
+      setDialogText('Please, enter your email to complete the test')
+      setOpenDialog(true)
+      return null
+    }
+    if (!email.match(/^[a-zA-Z0-9.!#$%&'*+/=?^_`{|}~-]+@[a-zA-Z0-9-]+(?:\.[a-zA-Z0-9-]+)*$/)) {
+      setDialogTitle('Enter a valid email')
+      setDialogText('Please, enter a valid email to complete the test')
+      setOpenDialog(true)
+      return null
+    }
+    setSubmitting(true)
+    const body = { email, answers }
+    const response = await axios.post('/api/answerquestion', body)
+    const score = response.data
+    if (score) {
+      setEmail()
+      setAnswers({})
+      setSubmitting(false)
+      router.push(`/result/${score.toUpperCase()}`)
+    }
+  }
 
   return (
     <Container className={classes.container} maxWidth="lg" >
-      <Heading/>
       {
-        [1, 2, 3, 4, 5, 6, 7, 8, 9, 10].map((e, i) => <Question key={i} />)
+        questions
+          ? <>
+            <Heading/>
+            { questions.map((question, i) => <Question key={i} question={question} answerQuestion={handleSetAnswer} />)}
+            <Email setEmail={handleSetEmail} />
+            <Submit submitting={submitting} handleSubmitAnswers={handleSubmitAnswers} />
+            <AlertDialog openDialog={openDialog} dialogTitle={dialogTitle} dialogText={dialogText} closeDialog={toggleDialog} />
+          </>
+          : <Loading/>
       }
-      <Email/>
-      <Submit/>
     </Container>
   )
 }
