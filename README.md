@@ -1,6 +1,17 @@
-This is a [Next.js](https://nextjs.org/) project bootstrapped with [`create-next-app`](https://github.com/vercel/next.js/tree/canary/packages/create-next-app).
+## JoinShift Challenge
 
-## Getting Started
+JoinShift Challenge
+
+A [Next.js](https://nextjs.org/) project bootstrapped with [`create-next-app`](https://github.com/vercel/next.js/tree/canary/packages/create-next-app).
+
+First, run with docker compose:
+Open the project directory in terminal then run;
+
+```bash
+sudo docker-compose up
+```
+After it finishes creating and the container is running - Open http://localhost:3000
+
 
 First, run the development server:
 

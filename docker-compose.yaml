@@ -1,0 +1,13 @@
+version: "3.3"
+
+services:
+  shiftchallenge:
+    ports:
+      - 3000:3000
+    build:
+      context: .
+      dockerfile: Dockerfile
+    volumes:
+      - /usr/src/app/node_modules
+      - /usr/src/app/.next
+    command: npm run start
