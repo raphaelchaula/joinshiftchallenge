@@ -15,7 +15,7 @@ Open the project directory in terminal then run;
 ```bash
 sudo docker-compose up
 ```
-After it finishes creating the image and the container is running \n
+After it finishes creating the image and the container is running <br/>
 Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
 
 
